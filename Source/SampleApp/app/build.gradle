@@ -1,0 +1,74 @@
+apply plugin: 'com.android.application'
+
+def DEV_BASE_URL = '"' + DevBaseUrl + '"'
+def STAGING_BASE_URL = '"' + StagingBaseUrl + '"'
+def RELEASE_BASE_URL = '"' + ReleaseBaseUrl + '"'
+
+def BASE_URL = 'BaseUrl'
+def DATA_TYPE = 'String'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.app"
+
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        versionCode Integer.valueOf("" + appVersionCode).intValue()
+        versionName "${appVersionName}"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        signingconfig_release {
+        }
+        signingconfig_debug {
+            keyAlias 'DebugAlias'
+            keyPassword 'Alias1234'
+            storeFile file('../../../Keys/debug_key.jks')
+            storePassword 'pass1234'
+        }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            buildConfigField(DATA_TYPE, BASE_URL, DEV_BASE_URL)
+
+            minifyEnabled false
+            debuggable true
+            useProguard false
+            signingConfig signingConfigs.signingconfig_debug
+        }
+        staging {
+            applicationIdSuffix ".staging"
+            buildConfigField(DATA_TYPE, BASE_URL, STAGING_BASE_URL)
+
+            minifyEnabled true
+            debuggable true
+            useProguard false
+            signingConfig signingConfigs.signingconfig_debug
+        }
+        release {
+            buildConfigField(DATA_TYPE, BASE_URL, RELEASE_BASE_URL)
+
+            minifyEnabled true
+            debuggable false
+            useProguard true
+            signingConfig signingConfigs.signingconfig_debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':watchdog')
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.support_version"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    apply from: "../artifacts.gradle"
+}
