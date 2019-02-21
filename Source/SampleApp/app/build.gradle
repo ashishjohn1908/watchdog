@@ -1,12 +1,5 @@
 apply plugin: 'com.android.application'
 
-def DEV_BASE_URL = '"' + DevBaseUrl + '"'
-def STAGING_BASE_URL = '"' + StagingBaseUrl + '"'
-def RELEASE_BASE_URL = '"' + ReleaseBaseUrl + '"'
-
-def BASE_URL = 'BaseUrl'
-def DATA_TYPE = 'String'
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
@@ -33,16 +26,14 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
-            buildConfigField(DATA_TYPE, BASE_URL, DEV_BASE_URL)
 
-            minifyEnabled false
+            minifyEnabled true
             debuggable true
             useProguard false
             signingConfig signingConfigs.signingconfig_debug
         }
         staging {
             applicationIdSuffix ".staging"
-            buildConfigField(DATA_TYPE, BASE_URL, STAGING_BASE_URL)
 
             minifyEnabled true
             debuggable true
@@ -50,10 +41,9 @@ android {
             signingConfig signingConfigs.signingconfig_debug
         }
         release {
-            buildConfigField(DATA_TYPE, BASE_URL, RELEASE_BASE_URL)
 
             minifyEnabled true
-            debuggable false
+            debuggable true
             useProguard true
             signingConfig signingConfigs.signingconfig_debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -63,12 +53,14 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':watchdog')
+//    implementation project(':watchdog')
     implementation "com.android.support:appcompat-v7:$rootProject.ext.support_version"
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+//    implementation "http://git.finoit.com/WatchDogs/WatchDog-Android.git"
 
     apply from: "../artifacts.gradle"
 }
