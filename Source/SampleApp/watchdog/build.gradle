@@ -10,19 +10,26 @@ android {
         versionName "1.0"
     }
     buildTypes{
-        staging{
-
-        }
+//        staging{
+//            minifyEnabled true
+//            debuggable false
+//            useProguard true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
         debug{
-
+            minifyEnabled true
+            debuggable false
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        release{
-            
-        }
+//        release{
+//            minifyEnabled true
+//            debuggable false
+//            useProguard true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
     }
 
     dependencies{
-        implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-        implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     }
 }

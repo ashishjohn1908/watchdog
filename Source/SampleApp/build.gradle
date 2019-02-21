@@ -5,6 +5,17 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven {
+            credentials {
+                username = "emp236"
+                password = "fin@123"
+            }
+            url "http://git.finoit.com/WatchDogs/WatchDog-Android"
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.0'
@@ -25,7 +36,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-ext{
+ext {
     compileSdkVersion = 28
     minSdkVersion = 19
     targetSdkVersion = 28

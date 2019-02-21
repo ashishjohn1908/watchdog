@@ -5,27 +5,27 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.app.watchdog.api.ApiServices;
-import com.app.watchdog.api.DataModel;
+import com.app.watchdog.api.ConnectionClass;
 import com.app.watchdog.utils.Installation;
 
-import java.util.Currency;
-import java.util.Locale;
-import java.util.TimeZone;
+import org.json.JSONObject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class WatchDog {
 
     private static String TAG = "WatchDog-Log:: ";
     private static Context mContext;
-    private static DataModel.DeviceInfo deviceInfo;
-    private static DataModel dataModel;
     private static String mApiKey;
+    private static String minSdk = "", targetSdk = "", versionCode = "", versionName = "";
+    private static String deviceName = "", isEmulator = "", timezone = "", locale = "", countryCode = "", currencyCode = "";
 
     public static void Watch(Context context, String key) {
         mContext = context;
@@ -37,58 +37,49 @@ public class WatchDog {
 
     private static void getDeviceDetails() {
 
-        Log.v(TAG + "DeviceName", getDeviceName());
-        Log.v(TAG + "Is Emulator", String.valueOf(isEmulator()));
-        Log.v(TAG + "Timezone", getTimezoneDetails());
-        Log.v(TAG + "Locale", getLocale());
-        Log.v(TAG + "CountryCode", getCountryCode());
-        Log.v(TAG + "CurrencyCode", getCurrencyCode(getCountryCode()));
+        deviceName = getDeviceName();
+        isEmulator = String.valueOf(isEmulator());
+        timezone = getTimezoneDetails();
+        locale = getLocale();
+        countryCode = getCountryCode();
+        if (!TextUtils.isEmpty(countryCode))
+            currencyCode = getCurrencyCode(getCountryCode());
 
-        deviceInfo = new DataModel.DeviceInfo(
-                getCurrencyCode(getCountryCode()),
-                getLocale(),
-                getDeviceName(),
-                getDeviceName(),
-                getDeviceOS(),
-                getCountryCode(),
-                getTimezoneDetails());
+        Log.v(TAG + "DeviceName", deviceName + "~deviceName");
+        Log.v(TAG + "Is Emulator", isEmulator + "~isEmulator");
+        Log.v(TAG + "Timezone", timezone + "~timezone");
+        Log.v(TAG + "Locale", locale + "~locale");
+        Log.v(TAG + "CountryCode", countryCode + "~countryCode");
+        Log.v(TAG + "CurrencyCode", currencyCode + "~currencyCode");
+
     }
 
     private static void getAppDetails() {
 
         String packageName = mContext.getPackageName();
         Log.v(TAG + "PackageName", packageName);
-
         Log.v(TAG + "AppInstallationId", getAppInstallId());
-        String minSdk = "", targetSdk = "", versionCode = "", versionName = "";
+
 
         try {
             PackageInfo pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+                minSdk = String.valueOf(pInfo.applicationInfo.minSdkVersion);
+                targetSdk = String.valueOf(pInfo.applicationInfo.targetSdkVersion);
+                versionCode = String.valueOf(pInfo.versionCode);
+                versionName = pInfo.versionName;
 
-            minSdk = String.valueOf(pInfo.applicationInfo.minSdkVersion);
-            Log.v(TAG + "MinSdkVersion", minSdk);
+            }
 
-            targetSdk = String.valueOf(pInfo.applicationInfo.targetSdkVersion);
-            Log.v(TAG + "MaxSdkVersion", targetSdk);
-
-            versionCode = String.valueOf(pInfo.versionCode);
-            Log.v(TAG + "VersionCode", versionCode);
-
-            versionName = pInfo.versionName;
-            Log.v(TAG + "VersionName", versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
-        dataModel = (new DataModel(getAppInstallId(),
-                minSdk,
-                targetSdk,
-                packageName,
-                versionName,
-                versionCode,
-                packageName,
-                getDeviceName(),
-                deviceInfo));
+        Log.v(TAG + "MinSdkVersion", minSdk + "~minSdk");
+        Log.v(TAG + "MaxSdkVersion", targetSdk + "~targetSdk");
+        Log.v(TAG + "VersionCode", versionCode + "~versionCode");
+        Log.v(TAG + "VersionName", versionName + "~versionName");
+
     }
 
     /**
@@ -109,7 +100,13 @@ public class WatchDog {
      * @return
      */
     private static String getCurrencyCode(String countryCode) {
-        return Currency.getInstance(new Locale("", countryCode)).getCurrencyCode();
+        String currencyCode = "";
+        try {
+            currencyCode = Currency.getInstance(new Locale("", countryCode)).getCurrencyCode();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return currencyCode;
     }
 
     /**
@@ -196,17 +193,31 @@ public class WatchDog {
 
 
     private static void postData() {
-        Call<DataModel> call = ApiServices.getRetrofitService().postDeviceInfo(dataModel, mApiKey);
-        call.enqueue(new Callback<DataModel>() {
-            @Override
-            public void onResponse(Call<DataModel> call, Response<DataModel> response) {
-                Log.v(TAG, String.valueOf(response.code()));
-            }
+        try {
+            JSONObject deviceInfoObject = new JSONObject();
+            deviceInfoObject.put("currency_code", currencyCode);
+            deviceInfoObject.put("language_code", locale);
+            deviceInfoObject.put("model", deviceName);
+            deviceInfoObject.put("name", deviceName);
+            deviceInfoObject.put("os_version", getDeviceOS());
+            deviceInfoObject.put("region_code", countryCode);
+            deviceInfoObject.put("time_zone_identifier", timezone);
 
-            @Override
-            public void onFailure(Call<DataModel> call, Throwable t) {
+            JSONObject dataObject = new JSONObject();
+            dataObject.put("installation_uuid", getAppInstallId());
+            dataObject.put("minimum_os_version", minSdk);
+            dataObject.put("target_os_version", targetSdk);
+            dataObject.put("name", mContext.getPackageName());
+            dataObject.put("version", versionName);
+            dataObject.put("build_number", versionCode);
+            dataObject.put("bundle_identifier", mContext.getPackageName());
+            dataObject.put("device_family", deviceName);
+            dataObject.put("device_info", deviceInfoObject);
 
-            }
-        });
+            ConnectionClass task = new ConnectionClass(dataObject.toString());
+            task.execute(mApiKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
