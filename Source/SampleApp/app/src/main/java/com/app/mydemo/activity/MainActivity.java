@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.app.mydemo.R;
+import com.app.watchdog.WatchDog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_click).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                WatchDog.Watch(MainActivity.this, "15506655826388me9KPYX8R");
+                WatchDog.Watch(MainActivity.this, "15506655826388me9KPYX8R");
             }
         });
     }
