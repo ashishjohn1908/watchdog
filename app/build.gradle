@@ -19,7 +19,7 @@ android {
         signingconfig_debug {
             keyAlias 'DebugAlias'
             keyPassword 'Alias1234'
-            storeFile file('../../../Keys/debug_key.jks')
+            storeFile file('../Keys/debug_key.jks')
             storePassword 'pass1234'
         }
     }
