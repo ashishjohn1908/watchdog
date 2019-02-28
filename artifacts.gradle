@@ -22,6 +22,6 @@ android.applicationVariants.all { variant ->
     }
 
     variant.outputs.all { output ->
-        outputFileName = getDateTime() + "-" + appName + "-${output.baseName}-${variant.versionName}.apk"
+        outputFileName = getDateTime() +"-"+ appName+"-${output.baseName}-${variant.versionName}.apk"
     }
 }

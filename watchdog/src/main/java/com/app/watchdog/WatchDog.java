@@ -8,6 +8,10 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.app.watchdog.api.ConnectionClass;
+import com.app.watchdog.data.AppPreference;
+import com.app.watchdog.utils.Installation;
+
 import org.json.JSONObject;
 
 import java.util.Currency;
@@ -22,12 +26,17 @@ public class WatchDog {
     private static String minSdk = "", targetSdk = "", versionCode = "", versionName = "";
     private static String deviceName = "", isEmulator = "", timezone = "", locale = "", countryCode = "", currencyCode = "";
 
-    public static void Watch(Context context, String key) {
+    public static void watch(Context context, String key) {
         mContext = context;
         mApiKey = key;
         getDeviceDetails();
         getAppDetails();
-        postData();
+
+//        This check will prevent watchDog to create multiple entry when app open.
+        if (!AppPreference.getInstance(mContext).getIsWatchdogInitialised())
+            postData();
+        else
+            Log.v(TAG, "Watchdog already initialised");
     }
 
     private static void getDeviceDetails() {
@@ -39,22 +48,9 @@ public class WatchDog {
         countryCode = getCountryCode();
         if (!TextUtils.isEmpty(countryCode))
             currencyCode = getCurrencyCode(getCountryCode());
-
-        Log.v(TAG + "DeviceName", deviceName + "~deviceName");
-        Log.v(TAG + "Is Emulator", isEmulator + "~isEmulator");
-        Log.v(TAG + "Timezone", timezone + "~timezone");
-        Log.v(TAG + "Locale", locale + "~locale");
-        Log.v(TAG + "CountryCode", countryCode + "~countryCode");
-        Log.v(TAG + "CurrencyCode", currencyCode + "~currencyCode");
-
     }
 
     private static void getAppDetails() {
-
-        String packageName = mContext.getPackageName();
-        Log.v(TAG + "PackageName", packageName);
-        Log.v(TAG + "AppInstallationId", getAppInstallId());
-
 
         try {
             PackageInfo pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
@@ -64,17 +60,15 @@ public class WatchDog {
                 versionCode = String.valueOf(pInfo.versionCode);
                 versionName = pInfo.versionName;
 
+                if (AppPreference.getInstance(mContext).getAppVersionCode() != pInfo.versionCode) {
+                    AppPreference.getInstance(mContext).setVersionCode(pInfo.versionCode);
+                    AppPreference.getInstance(mContext).setIsWatchdogInitialised(false);
+                }
             }
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
-        Log.v(TAG + "MinSdkVersion", minSdk + "~minSdk");
-        Log.v(TAG + "MaxSdkVersion", targetSdk + "~targetSdk");
-        Log.v(TAG + "VersionCode", versionCode + "~versionCode");
-        Log.v(TAG + "VersionName", versionName + "~versionName");
-
     }
 
     /**
@@ -209,7 +203,7 @@ public class WatchDog {
             dataObject.put("device_family", deviceName);
             dataObject.put("device_info", deviceInfoObject);
 
-            ConnectionClass task = new ConnectionClass(dataObject.toString());
+            ConnectionClass task = new ConnectionClass(mContext, dataObject.toString());
             task.execute(mApiKey);
         } catch (Exception e) {
             e.printStackTrace();

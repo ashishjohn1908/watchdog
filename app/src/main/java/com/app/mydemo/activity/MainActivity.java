@@ -1,6 +1,7 @@
-package com.app.debug;
+package com.app.mydemo.activity;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -10,14 +11,14 @@ import com.app.watchdog.WatchDog;
 public class MainActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.btn_click).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WatchDog.watch(MainActivity.this, "15506655826388me9KPYX8R");
+                WatchDog.watch(MainActivity.this, "1551333647768aQAS3NXUo0");
             }
         });
     }

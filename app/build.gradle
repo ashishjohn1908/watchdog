@@ -1,20 +1,44 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.app.debug"
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        versionCode Integer.valueOf("" + appVersionCode).intValue()
+        versionName "${appVersionName}"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
+    signingConfigs {
+        signingconfig_release {
+        }
+        signingconfig_debug {
+            keyAlias 'DebugAlias'
+            keyPassword 'Alias1234'
+            storeFile file('../Keys/debug_key.jks')
+            storePassword 'pass1234'
+        }
+    }
     buildTypes {
-        release {
+        debug {
+
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable true
+            useProguard true
+            signingConfig signingConfigs.signingconfig_debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+
+            minifyEnabled true
+            debuggable false
+            useProguard true
+            signingConfig signingConfigs.signingconfig_debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -22,6 +46,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':watchdog')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.support_version"
     apply from: "../artifacts.gradle"
 }
