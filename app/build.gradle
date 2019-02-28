@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.app"
+        applicationId "com.app.debug"
 
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -25,25 +25,17 @@ android {
     }
     buildTypes {
         debug {
-            applicationIdSuffix ".debug"
 
             minifyEnabled true
             debuggable true
-            useProguard false
+            useProguard true
             signingConfig signingConfigs.signingconfig_debug
-        }
-        staging {
-            applicationIdSuffix ".staging"
-
-            minifyEnabled true
-            debuggable true
-            useProguard false
-            signingConfig signingConfigs.signingconfig_debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
 
             minifyEnabled true
-            debuggable true
+            debuggable false
             useProguard true
             signingConfig signingConfigs.signingconfig_debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

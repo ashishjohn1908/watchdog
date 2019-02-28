@@ -1,7 +1,10 @@
 package com.app.watchdog.api;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+
+import com.app.watchdog.data.AppPreference;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -19,10 +22,12 @@ public class ConnectionClass extends AsyncTask<String, Void, Void> {
 
 
     private String postData;
+    private Context context;
     private static final String API_URL = "https://watchdog.finoit.com/api/watchdog/app-info/";
 
-    public ConnectionClass(String postData) {
+    public ConnectionClass(Context mContext, String postData) {
         this.postData = postData;
+        context = mContext;
     }
 
     @Override
@@ -55,7 +60,7 @@ public class ConnectionClass extends AsyncTask<String, Void, Void> {
             System.out.println("statusCode~ " + statusCode);
 
             if (statusCode == 200) {
-
+                AppPreference.getInstance(context).setIsWatchdogInitialised(true);
                 InputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
 
                 String response = convertInputStreamToString(inputStream);
@@ -66,6 +71,7 @@ public class ConnectionClass extends AsyncTask<String, Void, Void> {
             } else {
                 // Status code is not 200
                 // Do something to handle the error
+                AppPreference.getInstance(context).setIsWatchdogInitialised(false);
             }
 
         } catch (Exception e) {

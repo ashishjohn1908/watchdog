@@ -10,24 +10,19 @@ android {
         versionName "1.0"
     }
     buildTypes{
-//        staging{
-//            minifyEnabled true
-//            debuggable false
-//            useProguard true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//        }
+
         debug{
             minifyEnabled true
             debuggable false
             useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-//        release{
-//            minifyEnabled true
-//            debuggable false
-//            useProguard true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//        }
+        release{
+            minifyEnabled true
+            debuggable false
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 
     dependencies{
