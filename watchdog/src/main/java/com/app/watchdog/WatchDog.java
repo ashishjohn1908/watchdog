@@ -8,9 +8,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.app.watchdog.api.ConnectionClass;
 import com.app.watchdog.data.AppPreference;
-import com.app.watchdog.utils.Installation;
 
 import org.json.JSONObject;
 
@@ -20,7 +18,7 @@ import java.util.TimeZone;
 
 public class WatchDog {
 
-    private static String TAG = "WatchDog-Log:: ";
+    public static String TAG = "WatchDog-Log:: ";
     private static Context mContext;
     private static String mApiKey;
     private static String minSdk = "", targetSdk = "", versionCode = "", versionName = "";

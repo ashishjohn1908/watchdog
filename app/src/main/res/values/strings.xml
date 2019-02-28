@@ -1,7 +1,3 @@
 <resources>
-    <string name="app_name">Sample</string>
-    <!--Try to keep strings differentiated by screen names.-->
-
-    <!--Screen Main-->
-    <string name="dummy_test">This is a dummy text.</string>
+    <string name="app_name">MyApplication</string>
 </resources>

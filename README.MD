@@ -10,7 +10,7 @@ WatchDog is library that can be added in any project, so as to get basic device 
 	}
 
 2. Add this in dependencies in you app level gradle:
-	>*debugImplementation 'com.github.ashishjohn1908:watchdog:v1'*
+	>*debugImplementation 'com.github.ashishjohn1908:lib-watchdog:1.0.1'*
 
 3. Register your package name to get the key.
 

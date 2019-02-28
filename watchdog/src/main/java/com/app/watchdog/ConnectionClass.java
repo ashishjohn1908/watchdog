@@ -1,8 +1,9 @@
-package com.app.watchdog.api;
+package com.app.watchdog;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.app.watchdog.data.AppPreference;
 
@@ -14,6 +15,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static com.app.watchdog.WatchDog.TAG;
 
 /**
  * Created by Ashish John on 21/2/19.
@@ -57,7 +60,7 @@ public class ConnectionClass extends AsyncTask<String, Void, Void> {
             }
 
             int statusCode = urlConnection.getResponseCode();
-            System.out.println("statusCode~ " + statusCode);
+            Log.v(TAG, "statusCode~ " + statusCode);
 
             if (statusCode == 200) {
                 AppPreference.getInstance(context).setIsWatchdogInitialised(true);

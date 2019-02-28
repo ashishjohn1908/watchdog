@@ -1,4 +1,4 @@
-package com.app.watchdog.utils;
+package com.app.watchdog;
 
 import android.content.Context;
 
