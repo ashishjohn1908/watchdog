@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_click).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WatchDog.Watch(MainActivity.this, "1551333647768aQAS3NXUo0");
+                WatchDog.watch(MainActivity.this, "1551333647768aQAS3NXUo0");
             }
         });
     }

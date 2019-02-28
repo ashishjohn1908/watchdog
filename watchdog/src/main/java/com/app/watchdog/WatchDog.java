@@ -26,7 +26,7 @@ public class WatchDog {
     private static String minSdk = "", targetSdk = "", versionCode = "", versionName = "";
     private static String deviceName = "", isEmulator = "", timezone = "", locale = "", countryCode = "", currencyCode = "";
 
-    public static void Watch(Context context, String key) {
+    public static void watch(Context context, String key) {
         mContext = context;
         mApiKey = key;
         getDeviceDetails();
